@@ -1,0 +1,11 @@
+data/
+*.dta
+*.csv
+*.Rds
+*.tex
+*.docx
+*.pdf
+*.xlsx
+report/
+.Rproj.user
+.Rproj.user/
