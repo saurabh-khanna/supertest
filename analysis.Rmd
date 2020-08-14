@@ -1,7 +1,7 @@
 ---
 title: Active Learning and Student Achievement - Experimental Analysis
 date: "`r Sys.Date()`"
-output: 
+output:
   pdf_document:
     toc: true
     toc_depth: 3
@@ -15,6 +15,7 @@ knitr::opts_chunk$set(message = FALSE, warning = FALSE, echo = FALSE, fig.retina
 
 
 ```{r message=FALSE, warning=FALSE}
+options(qwraps2_markup = "markdown")
 # Libraries
 library(tidyverse)
 library(haven)
@@ -31,11 +32,33 @@ stu_file <- here::here("data", "stu_admin_all_latest.dta")
 ```{r}
 # Read in data
 df_stu <- 
-  read_dta(stu_file) %>% 
+  read_dta(stu_file) %>%
   mutate(
     female = gender - 1,
-    age = 2017 - lubridate::year(b_birthdate)
-  ) %>% 
+    age = 2017 - lubridate::year(b_birthdate),
+    father_college = if_else(father_ed_ind > 3 & !is.na(father_ed_ind), 1L, 0L),
+    father_college = if_else(is.na(father_ed_ind), NA_integer_, father_college),
+    mother_college = if_else(mother_ed_ind > 3 & !is.na(mother_ed_ind), 1L, 0L),
+    mother_college = if_else(is.na(mother_ed_ind), NA_integer_, mother_college),
+    b_ct_score_g1_z = if_else(grade == 2, b_ct_score, NA_real_) %>% scale() %>% as.vector(),
+    b_ct_score_g3_z = if_else(grade == 4, b_ct_score, NA_real_) %>% scale() %>% as.vector(),
+    b_ql_score_g1_z = if_else(grade == 2, b_ql_score, NA_real_) %>% scale() %>% as.vector(),
+    b_ql_score_g3_z = if_else(grade == 4, b_ql_score, NA_real_) %>% scale() %>% as.vector(),
+    b_rr_score_g1_z = if_else(grade == 2, b_rr_score, NA_real_) %>% scale() %>% as.vector(),
+    b_rr_score_g3_z = if_else(grade == 4, b_rr_score, NA_real_) %>% scale() %>% as.vector(),
+    e_ct_score_g1_z = if_else(grade == 2, e_ct_score, NA_real_) %>% scale() %>% as.vector(),
+    e_ct_score_g3_z = if_else(grade == 4, e_ct_score, NA_real_) %>% scale() %>% as.vector(),
+    e_ql_score_g1_z = if_else(grade == 2, e_ql_score, NA_real_) %>% scale() %>% as.vector(),
+    e_ql_score_g3_z = if_else(grade == 4, e_ql_score, NA_real_) %>% scale() %>% as.vector(),
+    e_rr_score_g1_z = if_else(grade == 2, e_rr_score, NA_real_) %>% scale() %>% as.vector(),
+    e_rr_score_g3_z = if_else(grade == 4, e_rr_score, NA_real_) %>% scale() %>% as.vector(),
+    b_math_score_g1_z = b_math_g1_score %>% scale() %>% as.vector(),
+    b_math_score_g3_z = b_math_g3_score %>% scale() %>% as.vector(),
+    e_math_score_g3_z = e_math_g3_score %>% scale() %>% as.vector(),
+    b_physics_score_g1_z = b_physics_g1_score %>% scale() %>% as.vector(),
+    b_physics_score_g3_z = b_physics_g3_score %>% scale() %>% as.vector(),
+    e_physics_score_g3_z = e_physics_g3_score %>% scale() %>% as.vector()
+  ) %>%
   filter(ea_stud_group_criteria == 2)
 
 # df <- 
@@ -47,20 +70,275 @@ df_stu <-
 #   )
 ```
 
+\newpage
 
-# Student level active learning
+# Year 1 cohort
 
 ## Critical Thinking
 
 ```{r}
 lm1 <-
   df_stu %>%
-  lm_robust(e_ct_score ~ z_active + b_ct_score, data = ., fixed_effects = ~ classid, se_type = "stata")
+  lm(e_ct_score_g1_z ~ z_active + b_ct_score_g1_z + classid, data = .)
 
 lm2 <-
   df_stu %>%
-  lm_robust(e_ct_score ~ z_active + b_ct_score + female + age + father_ed_ind + mother_ed_ind, data = ., fixed_effects = ~ classid, se_type = "stata")
+  lm(e_ct_score_g1_z ~ z_active + b_ct_score_g1_z + female + age + father_college + mother_college + classid, data = .)
 
-screenreg(list(lm1, lm2))
+
+screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:6), custom.note = "%stars \n All models control for department-year fixed effects.", omit.coef = "classid", reorder.coef = c(2, 3, 4, 5, 6, 7, 1), stars = c(0.01, 0.05, 0.1))
+```
+
+\newpage
+
+## Quantitative Literacy
+
+```{r}
+lm1 <-
+  df_stu %>%
+  lm(e_ql_score_g1_z ~ z_active + b_ql_score_g1_z + classid, data = .)
+
+lm2 <-
+  df_stu %>%
+  lm(e_ql_score_g1_z ~ z_active + b_ql_score_g1_z + female + age + father_college + mother_college + classid, data = .)
+
+
+screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:6), custom.note = "%stars \n All models control for department-year fixed effects.", omit.coef = "classid", reorder.coef = c(2, 3, 4, 5, 6, 7, 1), stars = c(0.01, 0.05, 0.1))
+```
+
+
+\newpage
+
+
+## Relational Reasoning
+
+```{r}
+lm1 <-
+  df_stu %>%
+  lm(e_rr_score_g1_z ~ z_active + b_rr_score_g1_z + classid, data = .)
+
+lm2 <-
+  df_stu %>%
+  lm(e_rr_score_g1_z ~ z_active + b_rr_score_g1_z + female + age + father_college + mother_college + classid, data = .)
+
+
+screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:6), custom.note = "%stars \n All models control for department-year fixed effects.", omit.coef = "classid", reorder.coef = c(2, 3, 4, 5, 6, 7, 1), stars = c(0.01, 0.05, 0.1))
+```
+
+
+\newpage
+
+
+## Math
+
+```{r}
+lm1 <-
+  df_stu %>%
+  lm(e_math_score_g3_z ~ z_activemath + b_math_score_g1_z + classid, data = .)
+
+lm2 <-
+  df_stu %>%
+  lm(e_math_score_g3_z ~ z_activemath + b_math_score_g1_z + female + age + father_college + mother_college + classid, data = .)
+
+
+screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:6), custom.note = "%stars \n All models control for department-year fixed effects.", omit.coef = "classid", reorder.coef = c(2, 3, 4, 5, 6, 7, 1), stars = c(0.01, 0.05, 0.1))
+```
+
+
+\newpage
+
+
+## Physics
+
+```{r}
+lm1 <-
+  df_stu %>%
+  lm(e_physics_score_g3_z ~ z_activephysics + b_physics_score_g1_z + classid, data = .)
+
+lm2 <-
+  df_stu %>%
+  lm(e_physics_score_g3_z ~ z_activephysics + b_physics_score_g1_z + female + age + father_college + mother_college + classid, data = .)
+
+
+screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:6), custom.note = "%stars \n All models control for department-year fixed effects.", omit.coef = "classid", reorder.coef = c(2, 3, 4, 5, 6, 7, 1), stars = c(0.01, 0.05, 0.1))
+```
+
+\newpage
+
+
+# Year 3 cohort
+
+## Critical Thinking
+
+```{r}
+lm1 <-
+  df_stu %>%
+  lm(e_ct_score_g3_z ~ z_active + b_ct_score_g3_z + classid, data = .)
+
+lm2 <-
+  df_stu %>%
+  lm(e_ct_score_g3_z ~ z_active + b_ct_score_g3_z + female + age + father_college + mother_college + classid, data = .)
+
+
+screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:6), custom.note = "%stars \n All models control for department-year fixed effects.", omit.coef = "classid", reorder.coef = c(2, 3, 4, 5, 6, 7, 1), stars = c(0.01, 0.05, 0.1))
+```
+
+
+\newpage
+
+
+## Quantitative Literacy
+
+```{r}
+lm1 <-
+  df_stu %>%
+  lm(e_ql_score_g3_z ~ z_active + b_ql_score_g3_z + classid, data = .)
+
+lm2 <-
+  df_stu %>%
+  lm(e_ql_score_g3_z ~ z_active + b_ql_score_g3_z + female + age + father_college + mother_college + classid, data = .)
+
+
+screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:6), custom.note = "%stars \n All models control for department-year fixed effects.", omit.coef = "classid", reorder.coef = c(2, 3, 4, 5, 6, 7, 1), stars = c(0.01, 0.05, 0.1))
+```
+
+
+\newpage
+
+
+## Relational Reasoning
+
+```{r}
+lm1 <-
+  df_stu %>%
+  lm(e_rr_score_g3_z ~ z_active + b_rr_score_g3_z + classid, data = .)
+
+lm2 <-
+  df_stu %>%
+  lm(e_rr_score_g3_z ~ z_active + b_rr_score_g3_z + female + age + father_college + mother_college + classid, data = .)
+
+
+screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:6), custom.note = "%stars \n All models control for department-year fixed effects.", omit.coef = "classid", reorder.coef = c(2, 3, 4, 5, 6, 7, 1), stars = c(0.01, 0.05, 0.1))
+```
+
+
+\newpage
+
+
+# Functional forms
+
+## Year 1
+
+### Critical Thinking
+
+```{r}
+df_stu %>% 
+  ggplot(aes(z_active, e_ct_score_g1_z)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_vline(xintercept = 0, linetype = "dashed") +
+  geom_smooth(method = "loess") +
+  labs(
+    caption = "All values reported in standard deviation units."
+  )
+```
+
+
+### Quantitative Literacy
+
+```{r}
+df_stu %>% 
+  ggplot(aes(z_active, e_ql_score_g1_z)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_vline(xintercept = 0, linetype = "dashed") +
+  geom_smooth(method = "loess") +
+  labs(
+    caption = "All values reported in standard deviation units."
+  )
+```
+
+
+### Relational Reasoning
+
+```{r}
+df_stu %>% 
+  ggplot(aes(z_active, e_rr_score_g1_z)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_vline(xintercept = 0, linetype = "dashed") +
+  geom_smooth(method = "loess") +
+  labs(
+    caption = "All values reported in standard deviation units."
+  )
+```
+
+
+### Math
+
+```{r}
+df_stu %>% 
+  ggplot(aes(z_activemath, e_math_score_g3_z)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_vline(xintercept = 0, linetype = "dashed") +
+  geom_smooth(method = "loess") +
+  labs(
+    caption = "All values reported in standard deviation units."
+  )
+```
+
+
+### Physics
+
+```{r}
+df_stu %>% 
+  ggplot(aes(z_activephysics, e_physics_score_g3_z)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_vline(xintercept = 0, linetype = "dashed") +
+  geom_smooth(method = "loess") +
+  labs(
+    caption = "All values reported in standard deviation units."
+  )
+```
+
+
+## Year 3
+
+### Critical Thinking
+
+```{r}
+df_stu %>% 
+  ggplot(aes(z_active, e_ct_score_g3_z)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_vline(xintercept = 0, linetype = "dashed") +
+  geom_smooth(method = "loess") +
+  labs(
+    caption = "All values reported in standard deviation units."
+  )
+```
+
+
+### Quantitative Literacy
+
+```{r}
+df_stu %>% 
+  ggplot(aes(z_active, e_ql_score_g3_z)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_vline(xintercept = 0, linetype = "dashed") +
+  geom_smooth(method = "loess") +
+  labs(
+    caption = "All values reported in standard deviation units."
+  )
+```
+
+
+### Relational Reasoning
+
+```{r}
+df_stu %>% 
+  ggplot(aes(z_active, e_rr_score_g3_z)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_vline(xintercept = 0, linetype = "dashed") +
+  geom_smooth(method = "loess") +
+  labs(
+    caption = "All values reported in standard deviation units."
+  )
 ```
 
