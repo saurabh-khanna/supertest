@@ -15,17 +15,16 @@ knitr::opts_chunk$set(message = FALSE, warning = FALSE, echo = FALSE, fig.retina
 
 
 ```{r message=FALSE, warning=FALSE}
-options(qwraps2_markup = "markdown")
 # Libraries
 library(tidyverse)
 library(haven)
 library(texreg)
 library(estimatr)
-library(tinytex)
 
 # Parameters
 stufac_file <- here::here("data", "all_appended.dta")
 stu_file <- here::here("data", "stu_admin_all_latest.dta")
+tpi_scores <- here::here("data", "tpi_scores.dta")
 ```
 
 
@@ -33,7 +32,14 @@ stu_file <- here::here("data", "stu_admin_all_latest.dta")
 # Read in data
 df_stu <- 
   read_dta(stu_file) %>%
-  mutate(
+  left_join(read_dta("data/controls.dta") %>% select(stdid, ses, score), by = "stdid") %>% 
+  transmute(
+    stdid, 
+    classid, 
+    elite,
+    ea_stud_group_criteria,
+    z_active, z_activemath, z_activephysics,
+    ses, score,
     female = gender - 1,
     age = 2017 - lubridate::year(b_birthdate),
     father_college = if_else(father_ed_ind > 3 & !is.na(father_ed_ind), 1L, 0L),
@@ -61,16 +67,18 @@ df_stu <-
   ) %>%
   filter(ea_stud_group_criteria == 2)
 
-# df <- 
-#   read_dta(stufac_file) %>% 
-#   inner_join(
-#     df_stu %>% 
-#       select(stdid, classid, starts_with("z_active")) %>% summary(),
-#     by = "stdid"
-#   )
+df <-
+  read_dta(stufac_file) %>%
+  distinct(stdid, course_name, facid, .keep_all = TRUE) %>% 
+  inner_join(df_stu, by = "stdid") %>% 
+  left_join(read_dta(tpi_scores), by = "facid") %>%
+  mutate(
+    classid_new = str_c(classid, course_name, sep = "_")
+  )
 ```
 
 \newpage
+
 
 # Year 1 cohort
 
@@ -78,15 +86,15 @@ df_stu <-
 
 ```{r}
 lm1 <-
-  df_stu %>%
-  lm(e_ct_score_g1_z ~ z_active + b_ct_score_g1_z + classid, data = .)
+  df %>%
+  lm(e_ct_score_g1_z ~ z_activefac + b_ct_score_g1_z + classid_new, data = .)
 
 lm2 <-
-  df_stu %>%
-  lm(e_ct_score_g1_z ~ z_active + b_ct_score_g1_z + female + age + father_college + mother_college + classid, data = .)
+  df %>%
+  lm(e_ct_score_g1_z ~ z_activefac + b_ct_score_g1_z + female + age + father_college + mother_college + ses + classid_new, data = .)
 
 
-screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:6), custom.note = "%stars \n All models control for department-year fixed effects.", omit.coef = "classid", reorder.coef = c(2, 3, 4, 5, 6, 7, 1), stars = c(0.01, 0.05, 0.1))
+screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", reorder.coef = c(2, 3, 4, 5, 6, 7, 8, 1), stars = c(0.01, 0.05, 0.1))
 ```
 
 \newpage
@@ -95,15 +103,15 @@ screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2
 
 ```{r}
 lm1 <-
-  df_stu %>%
-  lm(e_ql_score_g1_z ~ z_active + b_ql_score_g1_z + classid, data = .)
+  df %>%
+  lm(e_ql_score_g1_z ~ z_activefac + b_ql_score_g1_z + classid_new, data = .)
 
 lm2 <-
-  df_stu %>%
-  lm(e_ql_score_g1_z ~ z_active + b_ql_score_g1_z + female + age + father_college + mother_college + classid, data = .)
+  df %>%
+  lm(e_ql_score_g1_z ~ z_activefac + b_ql_score_g1_z + female + age + father_college + mother_college + ses + classid_new, data = .)
 
 
-screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:6), custom.note = "%stars \n All models control for department-year fixed effects.", omit.coef = "classid", reorder.coef = c(2, 3, 4, 5, 6, 7, 1), stars = c(0.01, 0.05, 0.1))
+screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", reorder.coef = c(2, 3, 4, 5, 6, 7, 8, 1), stars = c(0.01, 0.05, 0.1))
 ```
 
 
@@ -114,15 +122,15 @@ screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2
 
 ```{r}
 lm1 <-
-  df_stu %>%
-  lm(e_rr_score_g1_z ~ z_active + b_rr_score_g1_z + classid, data = .)
+  df %>%
+  lm(e_rr_score_g1_z ~ z_activefac + b_rr_score_g1_z + classid_new, data = .)
 
 lm2 <-
-  df_stu %>%
-  lm(e_rr_score_g1_z ~ z_active + b_rr_score_g1_z + female + age + father_college + mother_college + classid, data = .)
+  df %>%
+  lm(e_rr_score_g1_z ~ z_activefac + b_rr_score_g1_z + female + age + father_college + mother_college + ses + classid_new, data = .)
 
 
-screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:6), custom.note = "%stars \n All models control for department-year fixed effects.", omit.coef = "classid", reorder.coef = c(2, 3, 4, 5, 6, 7, 1), stars = c(0.01, 0.05, 0.1))
+screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", reorder.coef = c(2, 3, 4, 5, 6, 7, 8, 1), stars = c(0.01, 0.05, 0.1))
 ```
 
 
@@ -133,15 +141,15 @@ screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2
 
 ```{r}
 lm1 <-
-  df_stu %>%
-  lm(e_math_score_g3_z ~ z_activemath + b_math_score_g1_z + classid, data = .)
+  df %>%
+  lm(e_math_score_g3_z ~ z_activefac + b_math_score_g1_z + classid_new, data = .)
 
 lm2 <-
-  df_stu %>%
-  lm(e_math_score_g3_z ~ z_activemath + b_math_score_g1_z + female + age + father_college + mother_college + classid, data = .)
+  df %>%
+  lm(e_math_score_g3_z ~ z_activefac + b_math_score_g1_z + female + age + father_college + mother_college + ses + classid_new, data = .)
 
 
-screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:6), custom.note = "%stars \n All models control for department-year fixed effects.", omit.coef = "classid", reorder.coef = c(2, 3, 4, 5, 6, 7, 1), stars = c(0.01, 0.05, 0.1))
+screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", reorder.coef = c(2, 3, 4, 5, 6, 7, 8, 1), stars = c(0.01, 0.05, 0.1))
 ```
 
 
@@ -152,15 +160,15 @@ screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2
 
 ```{r}
 lm1 <-
-  df_stu %>%
-  lm(e_physics_score_g3_z ~ z_activephysics + b_physics_score_g1_z + classid, data = .)
+  df %>%
+  lm(e_physics_score_g3_z ~ z_activefac + b_physics_score_g1_z + classid_new, data = .)
 
 lm2 <-
-  df_stu %>%
-  lm(e_physics_score_g3_z ~ z_activephysics + b_physics_score_g1_z + female + age + father_college + mother_college + classid, data = .)
+  df %>%
+  lm(e_physics_score_g3_z ~ z_activefac + b_physics_score_g1_z + female + age + father_college + mother_college + ses + classid_new, data = .)
 
 
-screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:6), custom.note = "%stars \n All models control for department-year fixed effects.", omit.coef = "classid", reorder.coef = c(2, 3, 4, 5, 6, 7, 1), stars = c(0.01, 0.05, 0.1))
+screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", reorder.coef = c(2, 3, 4, 5, 6, 7, 8, 1), stars = c(0.01, 0.05, 0.1))
 ```
 
 \newpage
@@ -172,15 +180,15 @@ screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2
 
 ```{r}
 lm1 <-
-  df_stu %>%
-  lm(e_ct_score_g3_z ~ z_active + b_ct_score_g3_z + classid, data = .)
+  df %>%
+  lm(e_ct_score_g3_z ~ z_activefac + b_ct_score_g3_z + classid_new, data = .)
 
 lm2 <-
-  df_stu %>%
-  lm(e_ct_score_g3_z ~ z_active + b_ct_score_g3_z + female + age + father_college + mother_college + classid, data = .)
+  df %>%
+  lm(e_ct_score_g3_z ~ z_activefac + b_ct_score_g3_z + female + age + father_college + mother_college + ses + classid_new, data = .)
 
 
-screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:6), custom.note = "%stars \n All models control for department-year fixed effects.", omit.coef = "classid", reorder.coef = c(2, 3, 4, 5, 6, 7, 1), stars = c(0.01, 0.05, 0.1))
+screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", reorder.coef = c(2, 3, 4, 5, 6, 7, 8, 1), stars = c(0.01, 0.05, 0.1))
 ```
 
 
@@ -191,15 +199,15 @@ screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2
 
 ```{r}
 lm1 <-
-  df_stu %>%
-  lm(e_ql_score_g3_z ~ z_active + b_ql_score_g3_z + classid, data = .)
+  df %>%
+  lm(e_ql_score_g3_z ~ z_activefac + b_ql_score_g3_z + classid_new, data = .)
 
 lm2 <-
-  df_stu %>%
-  lm(e_ql_score_g3_z ~ z_active + b_ql_score_g3_z + female + age + father_college + mother_college + classid, data = .)
+  df %>%
+  lm(e_ql_score_g3_z ~ z_activefac + b_ql_score_g3_z + female + age + father_college + mother_college + ses + classid_new, data = .)
 
 
-screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:6), custom.note = "%stars \n All models control for department-year fixed effects.", omit.coef = "classid", reorder.coef = c(2, 3, 4, 5, 6, 7, 1), stars = c(0.01, 0.05, 0.1))
+screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", reorder.coef = c(2, 3, 4, 5, 6, 7, 8, 1), stars = c(0.01, 0.05, 0.1))
 ```
 
 
@@ -210,15 +218,15 @@ screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2
 
 ```{r}
 lm1 <-
-  df_stu %>%
-  lm(e_rr_score_g3_z ~ z_active + b_rr_score_g3_z + classid, data = .)
+  df %>%
+  lm(e_rr_score_g3_z ~ z_activefac + b_rr_score_g3_z + classid_new, data = .)
 
 lm2 <-
-  df_stu %>%
-  lm(e_rr_score_g3_z ~ z_active + b_rr_score_g3_z + female + age + father_college + mother_college + classid, data = .)
+  df %>%
+  lm(e_rr_score_g3_z ~ z_activefac + b_rr_score_g3_z + female + age + father_college + mother_college + ses + classid_new, data = .)
 
 
-screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:6), custom.note = "%stars \n All models control for department-year fixed effects.", omit.coef = "classid", reorder.coef = c(2, 3, 4, 5, 6, 7, 1), stars = c(0.01, 0.05, 0.1))
+screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", reorder.coef = c(2, 3, 4, 5, 6, 7, 8, 1), stars = c(0.01, 0.05, 0.1))
 ```
 
 
@@ -232,11 +240,11 @@ screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2
 ### Critical Thinking
 
 ```{r}
-df_stu %>% 
-  ggplot(aes(z_active, e_ct_score_g1_z)) +
+df %>% 
+  ggplot(aes(z_activefac, e_ct_score_g1_z)) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   geom_vline(xintercept = 0, linetype = "dashed") +
-  geom_smooth(method = "loess") +
+  geom_smooth() +
   labs(
     caption = "All values reported in standard deviation units."
   )
@@ -246,11 +254,11 @@ df_stu %>%
 ### Quantitative Literacy
 
 ```{r}
-df_stu %>% 
-  ggplot(aes(z_active, e_ql_score_g1_z)) +
+df %>% 
+  ggplot(aes(z_activefac, e_ql_score_g1_z)) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   geom_vline(xintercept = 0, linetype = "dashed") +
-  geom_smooth(method = "loess") +
+  geom_smooth() +
   labs(
     caption = "All values reported in standard deviation units."
   )
@@ -260,11 +268,11 @@ df_stu %>%
 ### Relational Reasoning
 
 ```{r}
-df_stu %>% 
-  ggplot(aes(z_active, e_rr_score_g1_z)) +
+df %>% 
+  ggplot(aes(z_activefac, e_rr_score_g1_z)) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   geom_vline(xintercept = 0, linetype = "dashed") +
-  geom_smooth(method = "loess") +
+  geom_smooth() +
   labs(
     caption = "All values reported in standard deviation units."
   )
@@ -274,11 +282,11 @@ df_stu %>%
 ### Math
 
 ```{r}
-df_stu %>% 
-  ggplot(aes(z_activemath, e_math_score_g3_z)) +
+df %>% 
+  ggplot(aes(z_activefac, e_math_score_g3_z)) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   geom_vline(xintercept = 0, linetype = "dashed") +
-  geom_smooth(method = "loess") +
+  geom_smooth() +
   labs(
     caption = "All values reported in standard deviation units."
   )
@@ -288,11 +296,11 @@ df_stu %>%
 ### Physics
 
 ```{r}
-df_stu %>% 
-  ggplot(aes(z_activephysics, e_physics_score_g3_z)) +
+df %>% 
+  ggplot(aes(z_activefac, e_physics_score_g3_z)) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   geom_vline(xintercept = 0, linetype = "dashed") +
-  geom_smooth(method = "loess") +
+  geom_smooth() +
   labs(
     caption = "All values reported in standard deviation units."
   )
@@ -304,11 +312,11 @@ df_stu %>%
 ### Critical Thinking
 
 ```{r}
-df_stu %>% 
-  ggplot(aes(z_active, e_ct_score_g3_z)) +
+df %>% 
+  ggplot(aes(z_activefac, e_ct_score_g3_z)) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   geom_vline(xintercept = 0, linetype = "dashed") +
-  geom_smooth(method = "loess") +
+  geom_smooth() +
   labs(
     caption = "All values reported in standard deviation units."
   )
@@ -318,11 +326,11 @@ df_stu %>%
 ### Quantitative Literacy
 
 ```{r}
-df_stu %>% 
-  ggplot(aes(z_active, e_ql_score_g3_z)) +
+df %>% 
+  ggplot(aes(z_activefac, e_ql_score_g3_z)) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   geom_vline(xintercept = 0, linetype = "dashed") +
-  geom_smooth(method = "loess") +
+  geom_smooth() +
   labs(
     caption = "All values reported in standard deviation units."
   )
@@ -332,11 +340,11 @@ df_stu %>%
 ### Relational Reasoning
 
 ```{r}
-df_stu %>% 
-  ggplot(aes(z_active, e_rr_score_g3_z)) +
+df %>% 
+  ggplot(aes(z_activefac, e_rr_score_g3_z)) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   geom_vline(xintercept = 0, linetype = "dashed") +
-  geom_smooth(method = "loess") +
+  geom_smooth() +
   labs(
     caption = "All values reported in standard deviation units."
   )
