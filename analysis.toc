@@ -1,21 +1,22 @@
-\contentsline {section}{\numberline {1}Year 1 cohort}{2}{section.1}%
-\contentsline {subsection}{\numberline {1.1}Critical Thinking}{2}{subsection.1.1}%
-\contentsline {subsection}{\numberline {1.2}Quantitative Literacy}{3}{subsection.1.2}%
-\contentsline {subsection}{\numberline {1.3}Relational Reasoning}{4}{subsection.1.3}%
-\contentsline {subsection}{\numberline {1.4}Math}{5}{subsection.1.4}%
-\contentsline {subsection}{\numberline {1.5}Physics}{6}{subsection.1.5}%
-\contentsline {section}{\numberline {2}Year 3 cohort}{7}{section.2}%
-\contentsline {subsection}{\numberline {2.1}Critical Thinking}{7}{subsection.2.1}%
-\contentsline {subsection}{\numberline {2.2}Quantitative Literacy}{8}{subsection.2.2}%
-\contentsline {subsection}{\numberline {2.3}Relational Reasoning}{9}{subsection.2.3}%
-\contentsline {section}{\numberline {3}Functional forms}{10}{section.3}%
-\contentsline {subsection}{\numberline {3.1}Year 1}{10}{subsection.3.1}%
-\contentsline {subsubsection}{\numberline {3.1.1}Critical Thinking}{10}{subsubsection.3.1.1}%
-\contentsline {subsubsection}{\numberline {3.1.2}Quantitative Literacy}{11}{subsubsection.3.1.2}%
-\contentsline {subsubsection}{\numberline {3.1.3}Relational Reasoning}{12}{subsubsection.3.1.3}%
-\contentsline {subsubsection}{\numberline {3.1.4}Math}{13}{subsubsection.3.1.4}%
-\contentsline {subsubsection}{\numberline {3.1.5}Physics}{14}{subsubsection.3.1.5}%
-\contentsline {subsection}{\numberline {3.2}Year 3}{15}{subsection.3.2}%
-\contentsline {subsubsection}{\numberline {3.2.1}Critical Thinking}{15}{subsubsection.3.2.1}%
-\contentsline {subsubsection}{\numberline {3.2.2}Quantitative Literacy}{16}{subsubsection.3.2.2}%
-\contentsline {subsubsection}{\numberline {3.2.3}Relational Reasoning}{17}{subsubsection.3.2.3}%
+\contentsline {section}{\numberline {1}Balance checks}{2}{section.1}%
+\contentsline {section}{\numberline {2}Year 1 cohort}{3}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Critical Thinking}{3}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Quantitative Literacy}{4}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Relational Reasoning}{5}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Math}{6}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}Physics}{7}{subsection.2.5}%
+\contentsline {section}{\numberline {3}Year 3 cohort}{8}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Critical Thinking}{8}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Quantitative Literacy}{9}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Relational Reasoning}{10}{subsection.3.3}%
+\contentsline {section}{\numberline {4}Functional forms}{11}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Year 1}{11}{subsection.4.1}%
+\contentsline {subsubsection}{\numberline {4.1.1}Critical Thinking}{11}{subsubsection.4.1.1}%
+\contentsline {subsubsection}{\numberline {4.1.2}Quantitative Literacy}{12}{subsubsection.4.1.2}%
+\contentsline {subsubsection}{\numberline {4.1.3}Relational Reasoning}{13}{subsubsection.4.1.3}%
+\contentsline {subsubsection}{\numberline {4.1.4}Math}{14}{subsubsection.4.1.4}%
+\contentsline {subsubsection}{\numberline {4.1.5}Physics}{15}{subsubsection.4.1.5}%
+\contentsline {subsection}{\numberline {4.2}Year 3}{16}{subsection.4.2}%
+\contentsline {subsubsection}{\numberline {4.2.1}Critical Thinking}{16}{subsubsection.4.2.1}%
+\contentsline {subsubsection}{\numberline {4.2.2}Quantitative Literacy}{17}{subsubsection.4.2.2}%
+\contentsline {subsubsection}{\numberline {4.2.3}Relational Reasoning}{18}{subsubsection.4.2.3}%

@@ -69,7 +69,7 @@ df_stu <-
 
 df <-
   read_dta(stufac_file) %>%
-  distinct(stdid, course_name, facid, .keep_all = TRUE) %>% 
+  distinct(stdid, course_name, .keep_all = TRUE) %>% 
   inner_join(df_stu, by = "stdid") %>% 
   left_join(read_dta(tpi_scores), by = "facid") %>%
   mutate(
@@ -79,6 +79,15 @@ df <-
 
 \newpage
 
+# Balance checks
+
+```{r}
+df %>%
+  lm_robust(z_activefac ~ b_ct_score_g1_z + female + age + father_college + mother_college + ses, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata") %>% 
+  summary()
+```
+
+\newpage
 
 # Year 1 cohort
 
@@ -87,15 +96,16 @@ df <-
 ```{r}
 lm1 <-
   df %>%
-  lm(e_ct_score_g1_z ~ z_activefac + b_ct_score_g1_z + classid_new, data = .)
+  lm_robust(e_ct_score_g1_z ~ z_activefac + b_ct_score_g1_z, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata")
 
 lm2 <-
   df %>%
-  lm(e_ct_score_g1_z ~ z_activefac + b_ct_score_g1_z + female + age + father_college + mother_college + ses + classid_new, data = .)
+  lm_robust(e_ct_score_g1_z ~ z_activefac + b_ct_score_g1_z + female + age + father_college + mother_college + ses, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata")
 
 
-screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", reorder.coef = c(2, 3, 4, 5, 6, 7, 8, 1), stars = c(0.01, 0.05, 0.1))
+screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", stars = c(0.01, 0.05, 0.1), include.ci = FALSE)
 ```
+
 
 \newpage
 
@@ -104,14 +114,14 @@ screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2
 ```{r}
 lm1 <-
   df %>%
-  lm(e_ql_score_g1_z ~ z_activefac + b_ql_score_g1_z + classid_new, data = .)
+  lm_robust(e_ql_score_g1_z ~ z_activefac + b_ql_score_g1_z, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata")
 
 lm2 <-
   df %>%
-  lm(e_ql_score_g1_z ~ z_activefac + b_ql_score_g1_z + female + age + father_college + mother_college + ses + classid_new, data = .)
+  lm_robust(e_ql_score_g1_z ~ z_activefac + b_ql_score_g1_z + female + age + father_college + mother_college + ses, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata")
 
 
-screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", reorder.coef = c(2, 3, 4, 5, 6, 7, 8, 1), stars = c(0.01, 0.05, 0.1))
+screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", stars = c(0.01, 0.05, 0.1), include.ci = FALSE)
 ```
 
 
@@ -123,14 +133,14 @@ screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2
 ```{r}
 lm1 <-
   df %>%
-  lm(e_rr_score_g1_z ~ z_activefac + b_rr_score_g1_z + classid_new, data = .)
+  lm_robust(e_rr_score_g1_z ~ z_activefac + b_rr_score_g1_z, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata")
 
 lm2 <-
   df %>%
-  lm(e_rr_score_g1_z ~ z_activefac + b_rr_score_g1_z + female + age + father_college + mother_college + ses + classid_new, data = .)
+  lm_robust(e_rr_score_g1_z ~ z_activefac + b_rr_score_g1_z + female + age + father_college + mother_college + ses, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata")
 
 
-screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", reorder.coef = c(2, 3, 4, 5, 6, 7, 8, 1), stars = c(0.01, 0.05, 0.1))
+screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", stars = c(0.01, 0.05, 0.1), include.ci = FALSE)
 ```
 
 
@@ -142,14 +152,14 @@ screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2
 ```{r}
 lm1 <-
   df %>%
-  lm(e_math_score_g3_z ~ z_activefac + b_math_score_g1_z + classid_new, data = .)
+  lm_robust(e_math_score_g3_z ~ z_activefac + b_math_score_g1_z, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata")
 
 lm2 <-
   df %>%
-  lm(e_math_score_g3_z ~ z_activefac + b_math_score_g1_z + female + age + father_college + mother_college + ses + classid_new, data = .)
+  lm_robust(e_math_score_g3_z ~ z_activefac + b_math_score_g1_z + female + age + father_college + mother_college + ses, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata")
 
 
-screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", reorder.coef = c(2, 3, 4, 5, 6, 7, 8, 1), stars = c(0.01, 0.05, 0.1))
+screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", stars = c(0.01, 0.05, 0.1), include.ci = FALSE)
 ```
 
 
@@ -161,14 +171,14 @@ screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2
 ```{r}
 lm1 <-
   df %>%
-  lm(e_physics_score_g3_z ~ z_activefac + b_physics_score_g1_z + classid_new, data = .)
+  lm_robust(e_physics_score_g3_z ~ z_activefac + b_physics_score_g1_z, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata")
 
 lm2 <-
   df %>%
-  lm(e_physics_score_g3_z ~ z_activefac + b_physics_score_g1_z + female + age + father_college + mother_college + ses + classid_new, data = .)
+  lm_robust(e_physics_score_g3_z ~ z_activefac + b_physics_score_g1_z + female + age + father_college + mother_college + ses, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata")
 
 
-screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", reorder.coef = c(2, 3, 4, 5, 6, 7, 8, 1), stars = c(0.01, 0.05, 0.1))
+screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", stars = c(0.01, 0.05, 0.1), include.ci = FALSE)
 ```
 
 \newpage
@@ -181,14 +191,14 @@ screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2
 ```{r}
 lm1 <-
   df %>%
-  lm(e_ct_score_g3_z ~ z_activefac + b_ct_score_g3_z + classid_new, data = .)
+  lm_robust(e_ct_score_g3_z ~ z_activefac + b_ct_score_g3_z, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata")
 
 lm2 <-
   df %>%
-  lm(e_ct_score_g3_z ~ z_activefac + b_ct_score_g3_z + female + age + father_college + mother_college + ses + classid_new, data = .)
+  lm_robust(e_ct_score_g3_z ~ z_activefac + b_ct_score_g3_z + female + age + father_college + mother_college + ses, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata")
 
 
-screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", reorder.coef = c(2, 3, 4, 5, 6, 7, 8, 1), stars = c(0.01, 0.05, 0.1))
+screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", stars = c(0.01, 0.05, 0.1), include.ci = FALSE)
 ```
 
 
@@ -200,14 +210,14 @@ screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2
 ```{r}
 lm1 <-
   df %>%
-  lm(e_ql_score_g3_z ~ z_activefac + b_ql_score_g3_z + classid_new, data = .)
+  lm_robust(e_ql_score_g3_z ~ z_activefac + b_ql_score_g3_z, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata")
 
 lm2 <-
   df %>%
-  lm(e_ql_score_g3_z ~ z_activefac + b_ql_score_g3_z + female + age + father_college + mother_college + ses + classid_new, data = .)
+  lm_robust(e_ql_score_g3_z ~ z_activefac + b_ql_score_g3_z + female + age + father_college + mother_college + ses, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata")
 
 
-screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", reorder.coef = c(2, 3, 4, 5, 6, 7, 8, 1), stars = c(0.01, 0.05, 0.1))
+screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", stars = c(0.01, 0.05, 0.1), include.ci = FALSE)
 ```
 
 
@@ -219,14 +229,14 @@ screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2
 ```{r}
 lm1 <-
   df %>%
-  lm(e_rr_score_g3_z ~ z_activefac + b_rr_score_g3_z + classid_new, data = .)
+  lm_robust(e_rr_score_g3_z ~ z_activefac + b_rr_score_g3_z, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata")
 
 lm2 <-
   df %>%
-  lm(e_rr_score_g3_z ~ z_activefac + b_rr_score_g3_z + female + age + father_college + mother_college + ses + classid_new, data = .)
+  lm_robust(e_rr_score_g3_z ~ z_activefac + b_rr_score_g3_z + female + age + father_college + mother_college + ses, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata")
 
 
-screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", reorder.coef = c(2, 3, 4, 5, 6, 7, 8, 1), stars = c(0.01, 0.05, 0.1))
+screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", stars = c(0.01, 0.05, 0.1), include.ci = FALSE)
 ```
 
 
