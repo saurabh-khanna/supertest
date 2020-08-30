@@ -79,17 +79,8 @@ df <-
 
 \newpage
 
-# Balance checks
 
-```{r}
-df %>%
-  lm_robust(z_activefac ~ b_ct_score_g1_z + female + age + father_college + mother_college + ses, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata") %>% 
-  summary()
-```
-
-\newpage
-
-# Year 1 cohort
+# Year 1 results
 
 ## Critical Thinking
 
@@ -184,7 +175,7 @@ screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2
 \newpage
 
 
-# Year 3 cohort
+# Year 3 results
 
 ## Critical Thinking
 
@@ -239,6 +230,95 @@ lm2 <-
 screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", stars = c(0.01, 0.05, 0.1), include.ci = FALSE)
 ```
 
+
+\newpage
+
+# Balance checks
+
+## Year 1
+
+### Critical Thinking
+
+```{r}
+df %>%
+  lm_robust(z_activefac ~ b_ct_score_g1_z + female + age + father_college + mother_college + ses, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata") %>% 
+  summary()
+```
+
+\newpage
+
+### Quantitative Literacy
+
+```{r}
+df %>%
+  lm_robust(z_activefac ~ b_ql_score_g1_z + female + age + father_college + mother_college + ses, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata") %>% 
+  summary()
+```
+
+\newpage
+
+
+### Relational Reasoning
+
+```{r}
+df %>%
+  lm_robust(z_activefac ~ b_rr_score_g1_z + female + age + father_college + mother_college + ses, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata") %>% 
+  summary()
+```
+
+\newpage
+
+
+### Math
+
+```{r}
+df %>%
+  lm_robust(z_activefac ~ b_math_score_g1_z + female + age + father_college + mother_college + ses, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata") %>% 
+  summary()
+```
+
+\newpage
+
+### Physics
+
+```{r}
+df %>%
+  lm_robust(z_activefac ~ b_physics_score_g1_z + female + age + father_college + mother_college + ses, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata") %>% 
+  summary()
+```
+
+\newpage
+
+## Year 3
+
+### Critical Thinking
+
+```{r}
+df %>%
+  lm_robust(z_activefac ~ b_ct_score_g3_z + female + age + father_college + mother_college + ses, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata") %>% 
+  summary()
+```
+
+\newpage
+
+### Quantitative Literacy
+
+```{r}
+df %>%
+  lm_robust(z_activefac ~ b_ql_score_g3_z + female + age + father_college + mother_college + ses, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata") %>% 
+  summary()
+```
+
+\newpage
+
+
+### Relational Reasoning
+
+```{r}
+df %>%
+  lm_robust(z_activefac ~ b_rr_score_g3_z + female + age + father_college + mother_college + ses, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata") %>% 
+  summary()
+```
 
 \newpage
 
