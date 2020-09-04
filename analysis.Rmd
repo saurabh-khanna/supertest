@@ -84,7 +84,8 @@ df <-
 
 ## Critical Thinking
 
-```{r}
+
+```{r, results = 'asis'}
 lm1 <-
   df %>%
   lm_robust(e_ct_score_g1_z ~ z_activefac + b_ct_score_g1_z, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata")
@@ -94,7 +95,7 @@ lm2 <-
   lm_robust(e_ct_score_g1_z ~ z_activefac + b_ct_score_g1_z + female + age + father_college + mother_college + ses, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata")
 
 
-screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", stars = c(0.01, 0.05, 0.1), include.ci = FALSE)
+texreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", stars = c(0.01, 0.05, 0.1), include.ci = FALSE)
 ```
 
 
@@ -102,7 +103,8 @@ screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2
 
 ## Quantitative Literacy
 
-```{r}
+
+```{r, results = 'asis'}
 lm1 <-
   df %>%
   lm_robust(e_ql_score_g1_z ~ z_activefac + b_ql_score_g1_z, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata")
@@ -112,7 +114,7 @@ lm2 <-
   lm_robust(e_ql_score_g1_z ~ z_activefac + b_ql_score_g1_z + female + age + father_college + mother_college + ses, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata")
 
 
-screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", stars = c(0.01, 0.05, 0.1), include.ci = FALSE)
+knitreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", stars = c(0.01, 0.05, 0.1), include.ci = FALSE)
 ```
 
 
@@ -121,7 +123,7 @@ screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2
 
 ## Relational Reasoning
 
-```{r}
+```{r, results = 'asis'}
 lm1 <-
   df %>%
   lm_robust(e_rr_score_g1_z ~ z_activefac + b_rr_score_g1_z, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata")
@@ -131,7 +133,7 @@ lm2 <-
   lm_robust(e_rr_score_g1_z ~ z_activefac + b_rr_score_g1_z + female + age + father_college + mother_college + ses, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata")
 
 
-screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", stars = c(0.01, 0.05, 0.1), include.ci = FALSE)
+knitreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", stars = c(0.01, 0.05, 0.1), include.ci = FALSE)
 ```
 
 
@@ -140,7 +142,7 @@ screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2
 
 ## Math
 
-```{r}
+```{r, results = 'asis'}
 lm1 <-
   df %>%
   lm_robust(e_math_score_g3_z ~ z_activefac + b_math_score_g1_z, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata")
@@ -150,7 +152,7 @@ lm2 <-
   lm_robust(e_math_score_g3_z ~ z_activefac + b_math_score_g1_z + female + age + father_college + mother_college + ses, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata")
 
 
-screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", stars = c(0.01, 0.05, 0.1), include.ci = FALSE)
+knitreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", stars = c(0.01, 0.05, 0.1), include.ci = FALSE)
 ```
 
 
@@ -159,7 +161,7 @@ screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2
 
 ## Physics
 
-```{r}
+```{r, results = 'asis'}
 lm1 <-
   df %>%
   lm_robust(e_physics_score_g3_z ~ z_activefac + b_physics_score_g1_z, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata")
@@ -169,7 +171,7 @@ lm2 <-
   lm_robust(e_physics_score_g3_z ~ z_activefac + b_physics_score_g1_z + female + age + father_college + mother_college + ses, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata")
 
 
-screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", stars = c(0.01, 0.05, 0.1), include.ci = FALSE)
+knitreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", stars = c(0.01, 0.05, 0.1), include.ci = FALSE)
 ```
 
 \newpage
@@ -179,7 +181,7 @@ screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2
 
 ## Critical Thinking
 
-```{r}
+```{r, results = 'asis'}
 lm1 <-
   df %>%
   lm_robust(e_ct_score_g3_z ~ z_activefac + b_ct_score_g3_z, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata")
@@ -189,7 +191,7 @@ lm2 <-
   lm_robust(e_ct_score_g3_z ~ z_activefac + b_ct_score_g3_z + female + age + father_college + mother_college + ses, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata")
 
 
-screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", stars = c(0.01, 0.05, 0.1), include.ci = FALSE)
+knitreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", stars = c(0.01, 0.05, 0.1), include.ci = FALSE)
 ```
 
 
@@ -198,7 +200,7 @@ screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2
 
 ## Quantitative Literacy
 
-```{r}
+```{r, results = 'asis'}
 lm1 <-
   df %>%
   lm_robust(e_ql_score_g3_z ~ z_activefac + b_ql_score_g3_z, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata")
@@ -208,7 +210,7 @@ lm2 <-
   lm_robust(e_ql_score_g3_z ~ z_activefac + b_ql_score_g3_z + female + age + father_college + mother_college + ses, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata")
 
 
-screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", stars = c(0.01, 0.05, 0.1), include.ci = FALSE)
+knitreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", stars = c(0.01, 0.05, 0.1), include.ci = FALSE)
 ```
 
 
@@ -217,7 +219,7 @@ screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2
 
 ## Relational Reasoning
 
-```{r}
+```{r, results = 'asis'}
 lm1 <-
   df %>%
   lm_robust(e_rr_score_g3_z ~ z_activefac + b_rr_score_g3_z, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata")
@@ -227,7 +229,7 @@ lm2 <-
   lm_robust(e_rr_score_g3_z ~ z_activefac + b_rr_score_g3_z + female + age + father_college + mother_college + ses, data = ., fixed_effects = ~ classid_new, clusters = classid_new, se_type = "stata")
 
 
-screenreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", stars = c(0.01, 0.05, 0.1), include.ci = FALSE)
+knitreg(list(lm1, lm2), groups = list("Treatment" = 1, "Control variables" = 2:7), custom.note = "%stars \n All models control for department-year-course fixed effects.", omit.coef = "classid", stars = c(0.01, 0.05, 0.1), include.ci = FALSE)
 ```
 
 
